@@ -271,7 +271,8 @@ const normalizeJob = (j) => (j && typeof j === 'object' && j.ID === undefined &&
 // titles: every job here is remote, and Google advises against location in
 // job titles. Falls back to the original if nothing would be left.
 const cleanTitle = (t) => {
-    const s = brandReplace(String(t ?? ''));
+    // U+0096/U+0097 are cp1252 dashes that arrived as C1 control characters.
+    const s = brandReplace(String(t ?? '')).replace(/\u0096/g, '\u2013').replace(/\u0097/g, '\u2014').replace(/[\u0080-\u009f]/g, '');
     return s.replace(/^\s*[\[(]\s*remote\s*[\])]\s*[-–:|]?\s*/i, '').replace(/\s+/g, ' ').trim() || s;
 };
 const cleanJobs = (jobs) => (Array.isArray(jobs)
