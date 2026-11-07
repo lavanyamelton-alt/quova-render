@@ -7,7 +7,7 @@ A plain Node web service (no dependencies) on the core13 job set (2M+ remote job
 2. Set `API_TOKEN` when asked.
 3. Canonical URLs come from Render's `RENDER_EXTERNAL_URL` automatically. Set `SITE_URL` when you add a custom domain.
 
-Optional env: `API_URL` (default `https://infinity.jobsearchhelp4u.com/core13`), `BRAND_NAME`, `SITE_URL`.
+Optional env (see `.env.example`): `API_URL` (default core13), `BRAND_NAME`, `SITE_URL`, `APPLY_DOMAIN`.
 
 ## URLs
 | Page | URL |

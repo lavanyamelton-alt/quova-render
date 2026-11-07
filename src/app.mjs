@@ -26,8 +26,9 @@ const SITEMAP_TTL = 3600;
 const API_TIMEOUTS = [8000, 5000];
 const SITEMAP_TIMEOUT = 60000;
 
-// Where "Apply" links resolve: the upstream permalink's path on our apply domain.
-const APPLY_DOMAIN = 'https://iwfh.currentaffairsadda22.com';
+// Where "Apply" links resolve: the upstream permalink's path on the apply
+// domain (APPLY_DOMAIN env overrides the default).
+const APPLY_DOMAIN = (env('APPLY_DOMAIN') || 'https://iwfh.currentaffairsadda22.com').replace(/\/+$/, '');
 const applyUrl = (permalink) => {
     const path = String(permalink || '').replace(/^https?:\/\/[^/]+/, '');
     return path !== '' ? APPLY_DOMAIN + path : APPLY_DOMAIN;
