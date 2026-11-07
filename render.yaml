@@ -1,0 +1,17 @@
+# Render Blueprint: New → Blueprint → pick this repo. API_TOKEN is asked for
+# during setup (sync: false keeps it out of git).
+services:
+  - type: web
+    name: quova
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: API_TOKEN
+        sync: false
