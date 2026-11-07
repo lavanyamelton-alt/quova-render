@@ -1,11 +1,12 @@
 {
   "name": "quova",
   "private": true,
-  "description": "Quova — curated remote job board (Render web service)",
+  "description": "Quova \u2014 curated remote roles, every morning",
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "smoke": "node scripts/build.mjs && node scripts/smoke.mjs"
   },
   "engines": {
     "node": ">=20"
