@@ -1,13 +1,13 @@
-// Quova web server for Render (plain Node, no dependencies).
+// Quova web server (plain Node, no dependencies).
 //
-// Render has no CDN page cache or edge functions in front of a web service, so
-// this process does it all:
+// No CDN page cache or edge functions sit in front of the service, so this
+// process does it all:
 //  - static files from public/ (fonts, google*.html)
 //  - bot gate: 403 for scraper / SEO / AI user agents (Googlebot allowlisted)
 //  - per-IP rate limit: 120 page requests per hour (Google's crawlers exempt)
 //  - page cache: each cacheable render is kept gzipped with an ETag for its
 //    TTL, so repeat hits skip the API and the template work entirely
-// Rendering itself lives in src/app.mjs.
+// Pages are built in src/views.mjs (data in src/engine.mjs).
 
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -30,7 +30,7 @@ const SECURITY_HEADERS = {
 
 // robots.txt, sitemaps, Search Console verification and /health stay reachable
 // by any client — sitemap fetchers often use curl-class UAs.
-const OPEN_PATH = /^\/(?:robots\.txt|health|sitemap(?:\.xml|-debug)|sitemaps\/(?:collections|openings-\d+)\.xml|google[a-z0-9]+\.html|fonts\/.*)$/;
+const OPEN_PATH = /^\/(?:robots\.txt|health|sitemap(?:\.xml|-debug)|sitemap\/(?:topics|briefs-\d+)\.xml|google[a-z0-9]+\.html|fonts\/.*)$/;
 
 // ─── Static files ───────────────────────────────────────────────────────────
 
@@ -162,7 +162,7 @@ const server = http.createServer(async (req, res) => {
             if (ua !== '' && !GOOGLE_RE.test(ua) && BAD_RE.test(ua)) {
                 return plainText(res, 403, '403 Forbidden', { 'X-Robots-Tag': 'noindex, nofollow' });
             }
-            // Render puts the real client first in X-Forwarded-For.
+            // The proxy puts the real client first in X-Forwarded-For.
             const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
             const retry = rateLimited(ip, ua);
             if (retry) return plainText(res, 429, '429 Too Many Requests', { 'Retry-After': String(retry), 'X-Robots-Tag': 'noindex, nofollow' });
@@ -181,11 +181,11 @@ const server = http.createServer(async (req, res) => {
         }
         send(req, res, entry);
     } catch (err) {
-        console.error('[quova] request error:', err);
+        console.error('[stimly] request error:', err);
         if (!res.headersSent) plainText(res, 500, 'Something went wrong. Please try again shortly.');
         else res.end();
     }
 });
 
 server.keepAliveTimeout = 65_000;
-server.listen(PORT, () => console.log(`[quova] listening on :${PORT}`));
+server.listen(PORT, () => console.log(`[stimly] listening on :${PORT}`));
